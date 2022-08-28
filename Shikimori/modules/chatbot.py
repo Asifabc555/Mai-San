@@ -1,174 +1,168 @@
-from functools import wraps
+# Credits to MetaVoid Team for making this module.
 
-from requests import JSONDecodeError, get
-from telethon import Button, TelegramClient, events
-from telethon.errors.rpcerrorlist import UserNotParticipantError
+import json
+import html
+import requests
+from Shikimori.modules.sql import log_channel_sql as logsql
+import Shikimori.modules.mongo.chatbot_mongo as sql
+from Shikimori.vars import AI_API_KEY as api
 
-from . import tbot as kuki
-from pymongo import MongoClient
+from time import sleep
+from telegram import ParseMode
+from telegram import (InlineKeyboardButton,
+                      InlineKeyboardMarkup, ParseMode, Update)
+from telegram.ext import (CallbackContext, CallbackQueryHandler, CommandHandler, Filters, MessageHandler)
+from telegram.utils.helpers import mention_html
+from Shikimori.modules.helper_funcs.chat_status import user_admin, user_admin_no_reply
+from Shikimori import  dispatcher
+from Shikimori.modules.log_channel import gloggable, loggable
 
-from config import MONGO_DB_URL
+bot_name = f"{dispatcher.bot.first_name}"
 
-
-####################### db ###########################
-
-kuki_db = MongoClient(MONGO_DB_URL)["KUKI"]["CHATS"]
-
-
-class Chat:
-    def init(self, chat_id):
-        self.chat_id = chat_id
-
-    def is_ai_chat(chat_id):
-        if kuki_db.find_one({"chat_id": chat_id}):
-            return True
-        else:
-            return False
-
-    def add_chat(chat_id):
-        if not Chat.is_ai_chat(chat_id):
-            kuki_db.insert_one({"chat_id": chat_id})
-        else:
-            return
-
-    def rm_chat(chat_id):
-        if Chat.is_ai_chat(chat_id):
-            kuki_db.delete_one({"chat_id": chat_id})
-        else:
-            return
-            
-            
-############################# HNDLR ###########################
-
-def cmd(**args):
-    args["pattern"] = "^(?i)[/!]" + args["pattern"] + f"(?: |$|{BOT_USERNAME})(.*)"
-
-    def decorator(func):
-        kuki.add_event_handler(func, events.NewMessage(**args))
-        return func
-
-    return decorator
-
-
-def cbk(**args):
-    def decorator(func):
-        kuki.add_event_handler(func, events.CallbackQuery(**args))
-        return func
-
-    return decorator
-
-
-def ryts(func):
-    @wraps(func)
-    async def admin_check(e):
-        if e.is_private:
-                return await func(e)
-        try:
-            perms = await e.client.get_permissions(e.chat_id, e.sender_id)
-            if not perms.is_admin:
-                return await e.reply("You are not an admin!")
-            elif not perms.change_info:
-                return await e.reply("You don't have permission to change info!")
-            else:
-                return await func(e)
-        except (UserNotParticipantError, ValueError):
-            return await e.reply("You are not in this chat!")
-
-    return admin_check
-
-
-def aichat(func):
-    @wraps(func)
-    async def ai_check(e): 
-        if Chat.is_ai_chat(e.chat_id):
-            await func(e)
-        else:
-            return
-
-    return ai_check
-
-
-############################################# API CHAT ###################
-
-
-class CONV:
-    def init(self):
-        self.bot = BOT_NAME
-        self.owner = OWNER
-        self.token = KUKI_TOKEN
-        self.url = "https://kukiapi.xyz/api"
-
-    def message(self, text):
-        try:
-            txt = get(
-                self.url
-                + f"/apikey={self.token}/{self.bot}/{self.owner}/message={text}",
-                timeout=10,
+@user_admin_no_reply
+@loggable
+@gloggable
+def chatbot_status(update: Update, context: CallbackContext):
+    query= update.callback_query
+    bot = context.bot
+    user = update.effective_user
+    if query.data == "add_chatbot":
+        chat = update.effective_chat
+        is_chatbot = sql.is_chatbot(chat.id)
+        if not is_chatbot:
+            is_chatbot = sql.add_chatbot(chat.id)
+            LOG = (
+                f"<b>{html.escape(chat.title)}:</b>\n"
+                f"AI_ENABLE\n"
+                f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}\n"
             )
-            return txt.json()["reply"]
-        except (JSONDecodeError, TimeoutError):
-            return "KUKI is not responding. Try again later."
-        except Exception as e:
-            return e
+            log_channel = logsql.get_chat_log_channel(chat.id)
+            if log_channel:
+                bot.send_message(
+                log_channel,
+                LOG,
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
+            )
+            update.effective_message.edit_text(
+                f"{bot_name} Chatbot Enabled by {mention_html(user.id, user.first_name)}.",
+                parse_mode=ParseMode.HTML,
+            )
+            return LOG
+        elif is_chatbot:
+            return update.effective_message.edit_text(
+                f"{bot_name} Chatbot Already Enabled.",
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            return update.effective_message.edit_text(
+                "Error!",
+                parse_mode=ParseMode.HTML,
+            )
+    elif query.data == "rem_chatbot":
+        chat = update.effective_chat
+        is_chatbot = sql.is_chatbot(chat.id)
+        if is_chatbot:
+            is_chatbot = sql.rm_chatbot(chat.id)
+            LOG = (
+                f"<b>{html.escape(chat.title)}:</b>\n"
+                f"AI_DISABLE\n"
+                f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}\n"
+            )
+            log_channel = logsql.get_chat_log_channel(chat.id)
+            if log_channel:
+                bot.send_message(
+                log_channel,
+                LOG,
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
+            )
+            update.effective_message.edit_text(
+                f"{bot_name} Chatbot disabled by {mention_html(user.id, user.first_name)}.",
+                parse_mode=ParseMode.HTML,
+            )
+            return LOG
+        elif not is_chatbot:
+            return update.effective_message.edit_text(
+                f"{bot_name} Chatbot Already Disabled.",
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            return update.effective_message.edit_text(
+                "Error!",
+                parse_mode=ParseMode.HTML,
+            )
 
-
-########################################## MSG HANDLERS ##################
-
-
-@cmd(pattern="start")
-async def start(e):
-    await e.reply("hey, I'm {}, a chatbot for Telegram.\n".format(BOT_NAME))
-
-
-@cmd(pattern="setchat")
-@ryts
-async def setchat(e):
-    buttons = Button.inline(
-        "Enable", data="enable_{}".format(e.sender_id)
-    ), Button.inline("Disable", data="disable_{}".format(e.sender_id))
-    await e.reply("AI chat setup", buttons=buttons)
-
-
-@cbk(pattern="enable_(.*)")
-async def enable_ai(e):
-    user = int(e.pattern_match.group(1))
-    if not user == e.sender_id:
-        return await e.answer("You ain't the one who used this command.", alert=True)
-    elif Chat.is_ai_chat(e.chat_id):
-        return await e.edit("AI is already enabled in this chat.")
-    await e.edit(
-        "Successfully enabled Kuki Ai by [{}](tg://user?id={})".format(
-            e.sender.first_name, e.sender_id
-        )
+@user_admin
+@loggable
+def chatbot(update: Update, context: CallbackContext):
+    message = update.effective_message
+    msg = "Choose an option"
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton(
+            text="Enable",
+            callback_data=r"add_chatbot")],
+       [
+        InlineKeyboardButton(
+            text="Disable",
+            callback_data=r"rem_chatbot")]])
+    message.reply_text(
+        msg,
+        reply_markup=keyboard,
+        parse_mode=ParseMode.HTML,
     )
-    Chat.add_chat(e.chat_id)
-@cbk(pattern="disable_(.*)")
-async def disable_ai(e):
-    user = int(e.pattern_match.group(1))
-    if not user == e.sender_id:
-        return await e.answer("You aint the one who used this command.", alert=True)
-    elif not Chat.is_ai_chat(e.chat_id):
-        return await e.edit("AI is already disabled in this chat.")
-    await e.edit(
-        "Successfully disabled Kuki Ai by [{}](tg://user?id={})".format(
-           e.sender.first_name, e.sender_id
-        )
-    )
-    Chat.rm_chat(e.chat_id)
 
+def bot_message(context: CallbackContext, message):
+    reply_message = message.reply_to_message
+    if reply_message:
+        if reply_message.from_user.id == context.bot.get_me().id:
+            return True
+    else:
+        return False
 
-@kuki.on(
-    events.NewMessage(incoming=True, func=lambda x: bool(x.mentioned) or x.is_private)
-)
-@aichat
-async def kuki_handler(e):
-    c = CONV()
-    if e.text.startswith(("/", "!")):
+def chatbot_msg(update: Update, context: CallbackContext):
+    message = update.effective_message
+    chat_id = update.effective_chat.id
+    bot = context.bot
+    is_chatbot = sql.is_chatbot(chat_id)
+    if not is_chatbot:
         return
-    await e.reply(c.message(e.raw_text))
+	
+    if message.text and not message.document:
+        if not bot_message(context, message):
+            return
+        Message = message.text
+        bot.send_chat_action(chat_id, action="typing")
+        chatbot = requests.get('https://kukiapi.xyz/api/apikey=866830519-KUKIqA8Fmb6Lz6/yuzuki/moezill/message='+Message)
+        Chat = json.loads(chatbot.text)
+        Chat = Chat['reply']
+        sleep(0.3)
+        message.reply_text(Chat, timeout=60)
 
+CHATBOTK_HANDLER = CommandHandler("chatbot", chatbot, run_async = True)
+ADD_CHAT_HANDLER = CallbackQueryHandler(chatbot_status, pattern=r"add_chatbot", run_async = True)
+RM_CHAT_HANDLER = CallbackQueryHandler(chatbot_status, pattern=r"rem_chatbot", run_async = True)
+CHATBOT_HANDLER = MessageHandler(
+    Filters.text & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!")
+                    & ~Filters.regex(r"^\/")), chatbot_msg, run_async = True)
 
-################################## INITIALIZATION ########################
+dispatcher.add_handler(ADD_CHAT_HANDLER)
+dispatcher.add_handler(CHATBOTK_HANDLER)
+dispatcher.add_handler(RM_CHAT_HANDLER)
+dispatcher.add_handler(CHATBOT_HANDLER)
 
-kuki.run_until_disconnected()
-print("KUKI AI IS NOW ONLINE\n\nCONTACT @METAVOIDSUPPORT FOR QUERIES")
+__handlers__ = [
+    ADD_CHAT_HANDLER,
+    CHATBOTK_HANDLER,
+    RM_CHAT_HANDLER,
+    CHATBOT_HANDLER,
+]
+
+__mod_name__ = "ChatBot 🤖"
+
+__help__ = """
+*Admins only Commands*:
+  ➢ `/Chatbot`*:* Shows chatbot control panel
+
+*Thx @mizuhara_chan1 for the API*
+"""
