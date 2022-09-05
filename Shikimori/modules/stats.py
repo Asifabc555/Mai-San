@@ -102,8 +102,8 @@ def stats(update, context):
                     [
                         [                  
                             InlineKeyboardButton(
-                                    text="REPO",
-                                    url="https://github.com/SOME-1HING/ShikimoriBot"),
+                                    text="WOF",
+                                    url="https://t.me/WingsOfFreedom2"),
                         ]
                     ]
                 ),
@@ -118,8 +118,8 @@ def stats(update, context):
                     [
                         [                  
                             InlineKeyboardButton(
-                                    text="REPO",
-                                    url="https://github.com/SOME-1HING/ShikimoriBot"),
+                                    text="WOF",
+                                    url="https://t.me/WingsOfFreedom2"),
                         ]
                     ]
                 ),
@@ -141,8 +141,8 @@ def stats(update, context):
                 [
                   [                  
                        InlineKeyboardButton(
-                                text="REPO",
-                                url="https://github.com/SOME-1HING/ShikimoriBot"),
+                                text="WOF",
+                                url="https://t.me/WingsOfFreedom2"),
                      ] 
                 ]
             ),
