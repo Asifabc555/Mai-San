@@ -68,7 +68,7 @@ from Shikimori.modules.disable import DisableAbleCommandHandler
 
 from Shikimori.events import register as Shikimori
 
-from Shikimori.covert import convert_gif 
+from src.covert import convert_gif 
 
 combot_stickers_url = "https://combot.org/telegram/stickers?q="
 
