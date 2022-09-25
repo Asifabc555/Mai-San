@@ -15,9 +15,9 @@ class Config(object):
     # REQUIRED
     # Login to https://my.telegram.org and fill in these slots with the details given by it
 
-    API_ID = 123456  # integer value, dont use ""
-    API_HASH = "awoo"
-    BOT_TOKEN = "BOT_TOKEN"  # This var used to be API_KEY but it is now TOKEN, adjust accordingly.
+    API_ID = 14980683  # integer value, dont use ""
+    API_HASH = "5bc2e9cd58092119e741c1f2b545c1bf"
+    BOT_TOKEN = "5798801841:AAHbsaPVf6ptXIdsJQOcvlqre2K5KyPtTko"  # This var used to be API_KEY but it is now TOKEN, adjust accordingly.
     OWNER_ID = 1606221784  # If you dont know, run the bot and do /id in your private chat with it, also an integer
     OWNER_USERNAME = "SOME1HING"
     SUPPORT_CHAT = "tyranteyeeee"  # Your own group for support, do not add the @
@@ -66,15 +66,15 @@ class Config(object):
     HEROKU_APP_NAME = (
         "awoo"  # Enter the Heroku app name here (Must an exact same name with your input above)
     )
-    ARQ_API = "awoo"
+    ARQ_API = "NUEAAO-XQIMZK-YGLYCP-GIQPOQ-ARQ"
     APOD_API_KEY = "awoo"
     REDIS_URL = "awoo"
-    ANIME_NAME = "Shikimori's Not Just a Cutie"
+    ANIME_NAME = "My Dress-Up Darling"
     START_MEDIA = "https://telegra.ph/file/9235d57807362b4e227a3.mp4"
-    BOT_USERNAME = "micchon_shikimori_bot"
+    BOT_USERNAME = "Marinn_Kitagawaa_Bot"
     UPDATE_CHANNEL = "Shikimori_bot_Updates"
-    ALIVE_MEDIA = "https://telegra.ph/file/2b04f7812f22b983f8a10.mp4"
-    BOT_ID = 5169508699
+    ALIVE_MEDIA = "https://telegra.ph/file/0f63e659fadd68b9367cf.mp4"
+    BOT_ID = 5798801841
     STATS_IMG = "awoo"
     NETWORK_USERNAME = "VoidxNetwork"
     NETWORK = "【V๏ɪ፝֟𝔡】»Network«"
