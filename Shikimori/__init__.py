@@ -21,11 +21,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
- NO_LOAD = Config.NO_LOAD
-    
- NO_LOAD = os.environ.get("NO_LOAD", "translation").split()
-
-
 import logging
 import sys
 import time
