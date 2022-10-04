@@ -244,10 +244,10 @@ def info(update: Update, context: CallbackContext):
     [
                         InlineKeyboardButton(
                              text="Health",
-                             url="https://t.me/sukunaXupdate/5"),
+                             url="https://t.me/WOFBotsUpdates/2"),
                        InlineKeyboardButton(
                              text="Disasters",
-                             url="https://t.me/sukunaXupdate/4"),
+                             url="https://t.me/WOFBotsUpdates/3"),
                     ],
     ]
     user_id = extract_user(update.effective_message, args)
