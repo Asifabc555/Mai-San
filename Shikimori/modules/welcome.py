@@ -222,14 +222,14 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
         if should_welc:
             
             # Give the Repo Creator a special welcome
-            if new_mem.id == 5598826878:
+            if new_mem.id == 5667156680:
                 update.effective_message.reply_photo(
-                    "https://telegra.ph/file/f00a3decb0fa64900098c.jpg", reply_to_message_id=reply
+                    "https://telegra.ph/file/b74d1c5356343a6ce7c95.jpg", reply_to_message_id=reply
                 )
                 welcome_log = (
                     f"{html.escape(chat.title)}\n"
                     f"#USER_JOINED\n"
-                    f"SOME1HING Joined the Chat"
+                    f"ʜᴜᴍᴀɴɪᴛʏ's sᴛʀᴏɴɢᴇsᴛ sᴏʟᴅɪᴇʀ Joined the Chat"
                 )
                 continue
 
@@ -274,7 +274,7 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
                 welcome_log = (
                     f"{html.escape(chat.title)}\n"
                     f"#USER_JOINED\n"
-                    f"Bot Owner Joined The Chat"
+                    f"ʜᴜᴍᴀɴɪᴛʏ's sᴛʀᴏɴɢᴇsᴛ sᴏʟᴅɪᴇʀ Joined The Chat"
                 )
                 continue
                 
