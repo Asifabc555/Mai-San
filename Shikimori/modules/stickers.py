@@ -426,7 +426,7 @@ def makepack_internal(
             success = context.bot.create_new_sticker_set(
                 user.id,
                 packname,
-                f"{name}s kang pack" + extra_version,
+                f"{name}s Pack :: @Marinn_Kitagawaa_Bot" + extra_version,
                 png_sticker=png_sticker,
                 emojis=emoji,
             )
@@ -434,7 +434,7 @@ def makepack_internal(
             success = context.bot.create_new_sticker_set(
                 user.id,
                 packname,
-                f"{name}s animated kang pack" + extra_version,
+                f"{name}s Animated Pack :: @Marinn_Kitagawaa_Bot" + extra_version,
                 tgs_sticker=tgs_sticker,
                 emojis=emoji,
             )
