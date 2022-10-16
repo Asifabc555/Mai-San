@@ -16,10 +16,10 @@ from telegram import TelegramError, Update
 from telegram.ext import run_async, CallbackContext
 from telegram.utils.helpers import mention_html
 
-from MikuXProBot import dispatcher
-from MikuXProBot.modules.disable import DisableAbleCommandHandler
-from MikuXProBot.events import register as Miku
-from MikuXProBot import telethn as bot
+from Shikimori import dispatcher
+from Shikimori.modules.disable import DisableAbleCommandHandler
+from Shikimori.events import register as Shikimori
+from Shikimori import telethn as bot
 
 combot_stickers_url = "https://combot.org/telegram/stickers?q="
 
@@ -577,7 +577,7 @@ def delsticker(update, context):
 Credit = "This Plugin Made by Kittu (@A_viyu), if you're using this code in your bot. there is no issue but don't remove this line" 
 
 
-@Miku(pattern="^/mmf ?(.*)")
+@Shikimori(pattern="^/mmf ?(.*)")
 async def handler(event):
     if event.fwd_from:
         return
@@ -615,7 +615,7 @@ async def drawText(image_path, text):
     if os.name == "nt":
         fnt = "ariel.ttf"
     else:
-        fnt = "./MikuXProBot/resources/Vampire Wars.otf"
+        fnt = "./Shikimori/resources/default.ttf"
     m_font = ImageFont.truetype(fnt, int((70 / 640) * i_width))
     if ";" in text:
         upper_text, lower_text = text.split(";")
