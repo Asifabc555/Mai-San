@@ -12,8 +12,6 @@ is_config = os.path.exists("config.py")
 
 if is_config:
     from config import *
-else:
-    from sample_config import *
 
 Chisato = Client(
     ":memory:",
