@@ -1,4 +1,4 @@
-Import json
+import json
 import html
 import requests
 from Shikimori.modules.sql import log_channel_sql as logsql
