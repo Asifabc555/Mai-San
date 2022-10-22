@@ -15,7 +15,7 @@ if is_config:
 
 Chisato = Client(
     ":memory:",
-    bot_token=bot_token,
+    bot_token="5619308814:AAExEgz5Y449TkYgasLvJNdxrR7v8jZK5gU",
     api_id=6,
     api_hash="eb06d4abfb49dc3eeb1aeb98ae0f581e",
 )
