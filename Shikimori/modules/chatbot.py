@@ -22,7 +22,7 @@ import json
 import re
 import html
 import requests
-import Exon.modules.sql.kuki_sql as sql
+import Shikimori.modules.sql.kuki_sql as sql
 
 from time import sleep
 from telegram import (CallbackQuery, Chat, InlineKeyboardButton,
@@ -33,10 +33,10 @@ from telegram.ext import (CallbackContext, CallbackQueryHandler, CommandHandler,
 from telegram.error import BadRequest, RetryAfter, Unauthorized
 from telegram.utils.helpers import mention_html
 
-from Exon.modules.helper_funcs.filters import CustomFilters
-from Exon.modules.helper_funcs.chat_status import user_admin, user_admin_no_reply
-from Exon import dispatcher
-from Exon.modules.log_channel import gloggable
+from Shikimori.modules.helper_funcs.filters import CustomFilters
+from Shikimori.modules.helper_funcs.chat_status import user_admin, user_admin_no_reply
+from Shikimori import dispatcher
+from Shikimori.modules.log_channel import gloggable
 
  
 @user_admin_no_reply
